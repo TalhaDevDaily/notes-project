@@ -1,56 +1,134 @@
 import React, { useEffect, useState } from "react";
 import { getDatabase, push, ref, set, onValue } from "firebase/database";
+import { FiEdit3, FiTrash2 } from "react-icons/fi";
 
 const Home = () => {
   const [inputData, setInputData] = useState("");
-
   const [result, setResult] = useState([]);
 
   const db = getDatabase();
 
   const handleSubmit = function (e) {
     e.preventDefault();
+    // keep existing behavior: save combined object
+    // Title is intentionally left out of the composer (placeholder only)
     set(push(ref(db, "notesCollection/")), {
+      title: "",
       data: inputData,
     });
+    // clear composer UI only
+    setInputData("");
   };
 
-  // CRUD Operation
-  // C => Create
-  // R => Read
-  // U => Update
-  // D => Delete
-
+  // CRUD Operation (unchanged)
   useEffect(() => {
     const userNotes = ref(db, "notesCollection/");
     onValue(userNotes, (snapshot) => {
       let convertArray = [];
       snapshot.forEach((item) => {
-        // console.log(item.val());
         convertArray.push(item.val());
       });
 
-      // console.log(data);
       setResult(convertArray);
     });
   }, []);
 
-  // console.log(result);
-
   return (
-    <>
-      <form>
-        <input
+    <div className="home-root">
+      {/* Note composer - inspired by Google Keep */}
+      <form className="composer" onSubmit={handleSubmit}>
+        {/* placeholder title (non-editable) */}
+        <div className="composer-title placeholder">Title</div>
+        <textarea
+          className="composer-body"
+          placeholder="Take a note..."
+          value={inputData}
           onChange={(e) => setInputData(e.target.value)}
-          type="text"
-          className="bg-black text-white"
+          rows={3}
         />
-        <button onClick={handleSubmit}>Add</button>
+        <div className="composer-actions">
+          <div className="left-actions">
+            {/* visual-only action icons (no functions) */}
+            <button type="button" className="icon-btn" aria-label="remind">
+              ⏰
+            </button>
+            <button
+              type="button"
+              className="icon-btn"
+              aria-label="collaborator"
+            >
+              👥
+            </button>
+
+            {/* Color palette - visual only */}
+            <div
+              className="color-palette mt-2"
+              role="list"
+              aria-label="Color palette"
+            >
+              {[
+                "#ffffff",
+                "#fff59d",
+                "#ffd54f",
+                "#ffe0b2",
+                "#c8e6c9",
+                "#bbdefb",
+                "#f8bbd0",
+              ].map((c, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  className="swatch"
+                  style={{ background: c }}
+                  aria-label={`Choose color ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="right-actions">
+            <button className="add-btn" type="submit">
+              Add
+            </button>
+          </div>
+        </div>
       </form>
-      {result.map((item, i) => (
-        <h1 key={i}>{item.data}</h1>
-      ))}
-    </>
+
+      {/* Notes grid */}
+      <div className="notes-grid">
+        {result.map((item, i) => (
+          <article className="note-card" key={i}>
+            <div className="note-header">
+              <h3 className="note-title">{item.title || "Untitled"}</h3>
+              <div className="note-actions">
+                <button
+                  className="icon-btn"
+                  type="button"
+                  title="Edit (visual)"
+                >
+                  <FiEdit3 />
+                </button>
+                <button
+                  className="icon-btn"
+                  type="button"
+                  title="Delete (visual)"
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
+            </div>
+            <p className="note-body">{item.data}</p>
+            <div className="note-footer">
+              <div className="footer-left">
+                <small className="note-date">just now</small>
+              </div>
+              <div className="footer-right">
+                {/* footer actions removed - only edit/delete allowed in header */}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
   );
 };
 
