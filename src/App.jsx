@@ -12,6 +12,7 @@ import MainLayout from "./layouts/MainLayout";
 import Register from "./pages/Register";
 import app from "./firebase.config";
 import Login from "./pages/Login";
+import Bin from "./pages/Bin";
 
 const App = () => {
   const pageRoute = createBrowserRouter(
@@ -25,6 +26,7 @@ const App = () => {
         <Route>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
+            <Route path="/bin" element={<Bin />} />
           </Route>
         </Route>
       </Route>

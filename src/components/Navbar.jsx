@@ -16,20 +16,31 @@ const Navbar = () => {
         className="nav-center flex justify-center items-center gap-6"
         aria-label="Main navigation"
       >
-        <Link
-          className="nav-link flex justify-center items-center gap-2 hover:font-semibold hover:text-green-950 group duration-[0.4s]"
+        {/* Home */}
+        <NavLink
           to="/"
+          className={({ isActive }) =>
+            isActive
+              ? "nav-link flex justify-center items-center gap-2 duration-[0.4s] bg-green-950 text-white py-1 px-2 rounded-[10px]"
+              : "nav-link flex justify-center items-center gap-2 duration-[0.4s] text-green-950"
+          }
         >
           <FiHome className="nav-icon" />
           <span className="group-hover:border-b border-green-950">Home</span>
-        </Link>
-        <Link
-          className="nav-link flex justify-center items-center gap-2 hover:font-semibold hover:text-green-950 group duration-[0.4s]"
+        </NavLink>
+
+        {/* Bin */}
+        <NavLink
           to="/bin"
+          className={({ isActive }) =>
+            isActive
+              ? "nav-link flex justify-center items-center gap-2 duration-[0.4s] bg-green-950 text-white py-1 px-2 rounded-[10px]"
+              : "nav-link flex justify-center items-center gap-2 duration-[0.4s] text-green-950"
+          }
         >
           <FiTrash2 className="nav-icon" />
           <span className="group-hover:border-b border-green-950">Bin</span>
-        </Link>
+        </NavLink>
       </nav>
 
       <div className="nav-right">
