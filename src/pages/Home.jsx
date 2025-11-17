@@ -5,6 +5,8 @@ import { FiEdit3, FiTrash2 } from "react-icons/fi";
 const Home = () => {
   const [inputData, setInputData] = useState("");
   const [result, setResult] = useState([]);
+  const [title, setTitle] = useState("");
+  const [color, setColor] = useState("bg-white");
 
   const db = getDatabase();
 
@@ -36,7 +38,11 @@ const Home = () => {
   return (
     <div className="home-root">
       {/* Note composer - inspired by Google Keep */}
-      <form className="composer" onSubmit={handleSubmit}>
+      <form
+        className="composer"
+        style={{ background: color }}
+        onSubmit={handleSubmit}
+      >
         {/* placeholder title (non-editable) */}
         <div className="composer-title placeholder">Title</div>
         <textarea
@@ -81,6 +87,7 @@ const Home = () => {
                   className="swatch"
                   style={{ background: c }}
                   aria-label={`Choose color ${idx + 1}`}
+                  onClick={() => setColor(c)}
                 />
               ))}
             </div>
