@@ -6,7 +6,7 @@ const Home = () => {
   const [inputData, setInputData] = useState("");
   const [result, setResult] = useState([]);
   const [title, setTitle] = useState("");
-  const [color, setColor] = useState("bg-white");
+  const [color, setColor] = useState("#ffffff");
 
   const db = getDatabase();
 
@@ -15,11 +15,13 @@ const Home = () => {
     // keep existing behavior: save combined object
     // Title is intentionally left out of the composer (placeholder only)
     set(push(ref(db, "notesCollection/")), {
-      title: "",
+      title: title,
       data: inputData,
+      noteColor: color,
     });
     // clear composer UI only
     setInputData("");
+    setTitle("");
   };
 
   // CRUD Operation (unchanged)
@@ -29,6 +31,7 @@ const Home = () => {
       let convertArray = [];
       snapshot.forEach((item) => {
         convertArray.push(item.val());
+        console.log(item.val());
       });
 
       setResult(convertArray);
@@ -43,8 +46,16 @@ const Home = () => {
         style={{ background: color }}
         onSubmit={handleSubmit}
       >
-        {/* placeholder title (non-editable) */}
-        <div className="composer-title placeholder">Title</div>
+        {/* input title */}
+        <input
+          className="compserTitle text-xl"
+          type="text"
+          placeholder="Title..."
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        {/* title input */}
+
         <textarea
           className="composer-body"
           placeholder="Take a note..."
@@ -103,7 +114,11 @@ const Home = () => {
       {/* Notes grid */}
       <div className="notes-grid">
         {result.map((item, i) => (
-          <article className="note-card" key={i}>
+          <article
+            className="note-card"
+            style={{ background: item.noteColor }}
+            key={i}
+          >
             <div className="note-header">
               <h3 className="note-title">{item.title || "Untitled"}</h3>
               <div className="note-actions">
