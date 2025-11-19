@@ -7,6 +7,7 @@ const Home = () => {
   const [result, setResult] = useState([]);
   const [title, setTitle] = useState("");
   const [color, setColor] = useState("#ffffff");
+  const [notes, setNotes] = useState([]);
 
   const db = getDatabase();
 
@@ -30,13 +31,18 @@ const Home = () => {
     onValue(userNotes, (snapshot) => {
       let convertArray = [];
       snapshot.forEach((item) => {
-        convertArray.push(item.val());
-        console.log(item.val());
+        convertArray.push({ key: item.key, notes: item.val() });
+        // console.log(item.val());
       });
+      setNotes(convertArray);
 
-      setResult(convertArray);
+      // console.log(convertArray);
+
+      // setResult(convertArray);
     });
   }, []);
+
+  // console.log(notes);
 
   return (
     <div className="home-root">
@@ -113,42 +119,52 @@ const Home = () => {
 
       {/* Notes grid */}
       <div className="notes-grid">
-        {result.map((item, i) => (
-          <article
-            className="note-card"
-            style={{ background: item.noteColor }}
-            key={i}
-          >
-            <div className="note-header">
-              <h3 className="note-title">{item.title || "Untitled"}</h3>
-              <div className="note-actions">
-                <button
-                  className="icon-btn"
-                  type="button"
-                  title="Edit (visual)"
-                >
-                  <FiEdit3 />
-                </button>
-                <button
-                  className="icon-btn"
-                  type="button"
-                  title="Delete (visual)"
-                >
-                  <FiTrash2 />
-                </button>
+        {notes.length === 0 ? (
+          <div>
+            <h2 className="text-xl font-semibold">
+              Your notes are empty 😪. Start writing above to get your notes
+              shown here. 📝
+            </h2>
+          </div>
+        ) : (
+          notes.map((item) => (
+            <article
+              className="note-card"
+              style={{ background: item.notes.noteColor }}
+              key={item.key}
+            >
+              {/* {console.log(item)} */}
+              <div className="note-header">
+                <h3 className="note-title">{item.notes.title || "Untitled"}</h3>
+                <div className="note-actions">
+                  <button
+                    className="icon-btn"
+                    type="button"
+                    title="Edit (visual)"
+                  >
+                    <FiEdit3 />
+                  </button>
+                  <button
+                    className="icon-btn"
+                    type="button"
+                    title="Delete (visual)"
+                  >
+                    <FiTrash2 />
+                  </button>
+                </div>
               </div>
-            </div>
-            <p className="note-body">{item.data}</p>
-            <div className="note-footer">
-              <div className="footer-left">
-                <small className="note-date">just now</small>
+              <p className="note-body">{item.notes.data}</p>
+              <div className="note-footer">
+                <div className="footer-left">
+                  <small className="note-date text-[#000000]">just now</small>
+                </div>
+                <div className="footer-right">
+                  {/* footer actions removed - only edit/delete allowed in header */}
+                </div>
               </div>
-              <div className="footer-right">
-                {/* footer actions removed - only edit/delete allowed in header */}
-              </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          ))
+        )}
       </div>
     </div>
   );
